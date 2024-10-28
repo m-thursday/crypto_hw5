@@ -5,28 +5,27 @@ import socket
 import hmac
 import json
 import sys
-
-def HMAC(key, plaintext):
-	return hmac.new(key, plaintext, hashlib.sha256).digest()
 	
-def verify(m, message):
+def verify(plaintext, key, sig1):
+	sig2 = hmac.new(key, plaintext, hashlib.sha256).digest()
 
-	if(m == message):
+	if(sig1 == sig2):
 		print('message verified')
 	else:
 		print('compromised connection')	
 
-if name == '__main__':
+if __name__ == '__main__':
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-	port = 30366
-	s.connect(('127.0.0.1', port))
+	host = '127.0.0.1'
+	port = 30368
 	
-	sig, message, key = s.recv(1024).decode()
+	s.connect((host, port))
 	
-	m = HMAC(key, message)
+	sig = s.recv(1024)
+	m = s.recv(1024).decode()
+	k = s.recv(1024)
 	
-	verify(m,message)
+	verify(m.encode(), k, sig)
 	
 	
 

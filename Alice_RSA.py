@@ -1,6 +1,9 @@
-from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Signature import pkcs1_15
+from Crypto.PublicKey import RSA
+from Crypto.Hash import SHA256
 from base64 import b64encode
 from base64 import b64decode
+from sys import argv
 import socket
 import rsa
 import sys
@@ -12,15 +15,22 @@ def rsaKey(size):
 	pub_key = key.publickey().export_key()
 	return priv_key, pub_key #Alice key pair
 
-def encryptRSA(plaintext, prKey):
+def signRSA(plaintext, key):
+	#Set key for cipher generation
+	Key = RSA.import_key(key)
 	#Generate the RSA cipher for encryption
-	cipher_rsa = PKCS1_OAEP.new(prKey)
+	mHash = SHA256.new(plaintext)
 	#encrypt plaintext
-	ciphertext = cipher_rsa.encrypt(plaintext)
+	ciphertext = pkcs1_15.new(Key).sign(mHash)
 	return ciphertext
 	
+def sendData(c,sig,pbKey,uInput):
+	c.sendall(pbKey)
+	c.sendall(sig)
+	c.sendall(uInput.encode())
+	
 
-if name == '__main__':
+if __name__ == '__main__':
 	#take in the script name and the message from command line
 	script, uInput = argv
 	#encode plaintext for encryption
@@ -28,9 +38,10 @@ if name == '__main__':
 	#create a socket for communication
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	#designate a port on the local machine
-	port = 30366
+	host = '127.0.0.1'
+	port = 30375
 	#bind the socket to the designated port with an empty parameter for the local ip
-	s.bind('', port)
+	s.bind((host, port))
 	#socket in listening mode
 	s.listen(5)
 	#key size
@@ -38,17 +49,14 @@ if name == '__main__':
 	#collect key data to use
 	prKey, pbKey = rsaKey(size)
 	#collect RSA signature
-	sig = encryptRSA(plaintext,prKey)
-	#create variables to hold signature and message, and public key
-	data = sig, uInput
-	sendData = pbKey, data
+	sig = signRSA(plaintext, prKey)
 	
 	while True:
 		#estabolish connection
 		c, addr = s.accept()
 		#send Alice public key to Bob for verifying
 		#along with the rest of the data
-		c.send(sendData)
+		sendData(c,sig,pbKey,uInput)
 		#close out the connection
 		c.close()
 		#break the while loop

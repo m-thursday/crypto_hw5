@@ -1,37 +1,44 @@
-from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Signature import pkcs1_15
+from Crypto.PublicKey import RSA
+from Crypto.Hash import SHA256
 from base64 import b64encode
 from base64 import b64decode
 import socket
 import rsa
 import sys
 
+
 #generates cipher and decrypts message using given public key
-def decryptRSA(publicKey, signature): 
-	cipher_rsa = PKCS1_OAEP.new(publicKey)
-	m = cipher_rsa.decrypt(ciphertext)
-	return m
-	
-def verify(mData, message):
-
-	if(mData == message):
+def verify(plaintext, key, signature):
+	#Set key for cipher generation
+	Key = RSA.import_key(key)
+	#Generate the RSA cipher for encryption
+	mHash = SHA256.new(plaintext)
+	#encrypt plaintext
+	try:
+		pkcs1_15.new(Key).verify(mHash, signature)
+		print(plaintext.decode('utf-8'))
 		print('message verified')
-	else:
+	except(ValueError,TypeError):
 		print('compromised connection')	
+		
 
 
-if name == '__main__':
+if __name__ == '__main__':
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	port = 30366
+	port = 30375
 	#connect the socket to the local machine on the designated port
 	s.connect(('127.0.0.1', port))
 	
 	#parse the received data
-	publicKey, data = s.recv(4096).decode()
-	signature, mData = data
+	publicKey = s.recv(2048)
+	signature = s.recv(256)
+	mData = s.recv(1024).decode()
 	
-	message = decryptRSA(publicKey, signature)
+	plaintext = mData.encode('utf-8')
 	
-	verify(mData,message)
+	verify(plaintext, publicKey, signature)
+	
 	
 	
 

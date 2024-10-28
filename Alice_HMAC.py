@@ -1,5 +1,6 @@
-pfrom base64 import b64encode
+from base64 import b64encode
 from base64 import b64decode
+from sys import argv
 import hashlib
 import secrets
 import socket
@@ -15,23 +16,26 @@ def HMAC(plaintext,key):
 	return hmac.new(key, plaintext, hashlib.sha256).digest()
 	
 
-if name == '__main__':
-	script, uInput = argv
+if __name__ == '__main__':
+	script, state, uInput = argv
 	plaintext = uInput.encode('utf-8')
 	
-	size = 16
-	
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	port = 30366
-	s.bind('', port)
+	host = '127.0.0.1'
+	port = 30368
+	s.bind((host, port))
 	s.listen(5)
 	
+	size = 16
 	hmac_key = hmacKey(size)
-	
-	s = HMAC(plaintext, hmac_key)
-	
-	data = s, uInput, hmac_key
-	
+	sig = HMAC(plaintext, hmac_key)
+		
 	while True:
 		c, addr = s.accept()
-		c.send(data)
+		c.sendall(sig)
+		c.sendall(uInput.encode())
+		c.sendall(hmac_key)
+			
+		c.close()
+			
+		break
