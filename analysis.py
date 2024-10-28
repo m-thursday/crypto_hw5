@@ -101,10 +101,3 @@ if __name__ == '__main__':
 	print("Average RSA Verification")
 	print("--------------------------------------------------")
 	print(averageVerify)
-	
-	
-	
-	
-	
-	
-	
