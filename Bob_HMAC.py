@@ -3,8 +3,7 @@ from base64 import b64decode
 import hashlib
 import socket
 import hmac
-import json
-import sys
+
 	
 def verify(plaintext, key, sig1):
 	sig2 = hmac.new(key, plaintext, hashlib.sha256).digest()

@@ -5,8 +5,6 @@ from base64 import b64encode
 from base64 import b64decode
 from sys import argv
 import socket
-import rsa
-import sys
 
 def rsaKey(size): 
 	#generate key data for Alice given a key size
@@ -25,6 +23,7 @@ def signRSA(plaintext, key):
 	return ciphertext
 	
 def sendData(c,sig,pbKey,uInput):
+	#Cleaner method for sending all the data
 	c.sendall(pbKey)
 	c.sendall(sig)
 	c.sendall(uInput.encode())
@@ -33,6 +32,9 @@ def sendData(c,sig,pbKey,uInput):
 if __name__ == '__main__':
 	#take in the script name and the message from command line
 	script, uInput = argv
+	#ensure correct message length
+	while len(uInput) != 18:
+		uInput = input("Give an 18 byte message for RSA: ")
 	#encode plaintext for encryption
 	plaintext = uInput.encode('utf-8')
 	#create a socket for communication

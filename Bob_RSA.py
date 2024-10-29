@@ -4,8 +4,6 @@ from Crypto.Hash import SHA256
 from base64 import b64encode
 from base64 import b64decode
 import socket
-import rsa
-import sys
 
 
 #generates cipher and decrypts message using given public key

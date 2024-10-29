@@ -1,18 +1,8 @@
 Instructions For How To Run The Code:
-HMAC:
-	no initial setup required
-	python3 Alice_HMAC.py '*some 18 byte message*'
-	
-	- in a seperate terminal - 
-	python3 Bob_HMAC.py
-
-RSA:
-	pip install rsa
-	python3 Alice_RSA.py '*some 18 byte message*'
-	
-	- in a seperate terminal - 
-	python3 Bob_RSA.py
-	
-
-
-
+No setup required
+- for both HMAC and RSA alice and bob need to be ran in seperate terminals
+- Alice will take an 18 byte message string for both files
+- Bob takes no user input
+- Analysis and Collision should be ran on their own
+- Analysis takes a 7 byte input
+- Collision takes no input

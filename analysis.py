@@ -1,16 +1,11 @@
 from Crypto.Signature import pkcs1_15
 from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA256
-from base64 import b64encode
-from base64 import b64decode
 from sys import argv
 import hashlib
 import secrets
-import socket
 import hmac
 import time
-import rsa
-import sys
 
 def hmacKey(size):
 	#HMAC key generation (random 16 byte long token)
@@ -57,7 +52,7 @@ if __name__ == '__main__':
 	plaintext = uInput.encode('utf-8')
 	
 	while len(uInput) != 7:
-		input("Give a 7 byte message for analysis", uInput)
+		uInput = input("Give a 7 byte message for analysis: ")
 		
 	tmpHMAC = 0
 	tmpSign = 0
