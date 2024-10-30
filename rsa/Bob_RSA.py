@@ -32,9 +32,9 @@ if __name__ == '__main__':
 	publicKey = s.recv(2048)
 	signature = s.recv(256)
 	mData = s.recv(1024).decode()
-	
+	#encode message since it was encoded and decoded we utf-8 encode it to sign it
 	plaintext = mData.encode('utf-8')
-	
+	#verify
 	verify(plaintext, publicKey, signature)
 	
 	

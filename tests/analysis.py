@@ -46,19 +46,21 @@ def verify(plaintext, key, sig1, p):
 		print('compromised connection')		
 	
 if __name__ == '__main__':
-	
+	#take user input
 	script, uInput = argv
-	
+	#encodes user input for hashing
 	plaintext = uInput.encode('utf-8')
-	
+	#ensures proper message length from user
 	while len(uInput) != 7:
 		uInput = input("Give a 7 byte message for analysis: ")
-		
+	#initialize counter variables for averages
 	tmpHMAC = 0
 	tmpSign = 0
 	tmpVer = 0
+	#Makes it so the verify function only prints once (kinda useless but pretty funny)
 	p = 0
-		
+	
+	#Runs the HMAC analysis with 16 byte key
 	size = 16
 	hmac_key = hmacKey(size)	
 	for i in range (99):
@@ -67,6 +69,7 @@ if __name__ == '__main__':
 		end = time.time()
 		tmpHMAC += (end - start)
 	
+	#Runs the RSA signing analysis and verification analysis
 	size = 2048
 	prKey, pbKey = rsaKey(size)
 	for i in range (99):
@@ -80,10 +83,12 @@ if __name__ == '__main__':
 		tmpVer += (end1 - start1)
 		p += 1
 	
+	#Compute Averages
 	averageHMAC = tmpHMAC / 100
 	averageSign = tmpSign / 100
 	averageVerify = tmpVer / 100
 	
+	#print everything for the user to see
 	print("--------------------------------------------------")	
 	print("Average HMAC Generation")
 	print("--------------------------------------------------")
